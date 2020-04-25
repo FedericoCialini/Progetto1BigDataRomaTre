@@ -1,15 +1,16 @@
 import sys
+import datetime
 
 
 class DailyPrice:
-    def __init__(self, ticker, openvalue, closevalue, lowthe, highthe, volume):
+    def __init__(self, ticker, openvalue, closevalue, lowthe, highthe, volume, date):
         self.ticker = ticker
         self.openvalue = openvalue
         self.closevalue = closevalue
         self.lowthe = lowthe
         self.highthe = highthe
         self.volume = volume
-        #self.date = date
+        self.date = date
 
     def __eq__(self, other):
         return self.ticker == other.ticker and self.openvalue == other.openvalue and self.closevalue == other.closevalue and self.lowthe == other.lowthe and self.highthe == other.highthe
@@ -20,22 +21,28 @@ class DailyPrice:
 
 h = {}
 for line in sys.stdin.readlines():
-    Ticker, OpenValue, CloseValue, LowThe, HighThe, volume = line.split(",")
-    price = DailyPrice(Ticker, OpenValue, CloseValue, LowThe, HighThe, volume)
+    try:
+        Ticker, OpenValue, CloseValue, LowThe, HighThe, volume, Date = line.strip().split("\t")
+    except:
+        continue
+    price = DailyPrice(Ticker, OpenValue, CloseValue, LowThe, HighThe, volume, Date)
     h[Ticker] = h.get(Ticker, []) + [price]
-    # print("a")
 for Ticker in h.keys():
     prices = h[Ticker]
-    openValue = float(prices[0].openvalue)
-    closeValue = float(prices[-1].closevalue)
-    FinalVariance = str(((closeValue - openValue) / openValue) * 100) + "%"
+    dates = []
     maxvalues = []
     minvalues = []
     volumes = []
-    # print("b")
     for price in prices:
+        dates.append(price.date)
         volumes.append(float(price.volume))
         maxvalues.append(float(price.highthe))
         minvalues.append(float(price.lowthe))
-    print(Ticker, FinalVariance , max(maxvalues), min(minvalues),
+    #print(dates)
+    openValue = float(prices[0].openvalue)
+    #print(prices[0].date)
+    closeValue = float(prices[-1].closevalue)
+    #print(prices[-1].date)
+    FinalVariance = str(((closeValue - openValue) / openValue) * 100) + "%"
+    print(Ticker, FinalVariance, max(maxvalues), min(minvalues),
           sum(volumes) / len(volumes), sep=" ")
