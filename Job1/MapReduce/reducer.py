@@ -1,5 +1,4 @@
 import sys
-import datetime
 
 
 class DailyPrice:
@@ -21,12 +20,10 @@ class DailyPrice:
 
 h = {}
 for line in sys.stdin.readlines():
-    try:
-        Ticker, OpenValue, CloseValue, LowThe, HighThe, volume, Date = line.strip().split("\t")
-    except:
-        continue
+    Ticker, OpenValue, CloseValue, LowThe, HighThe, volume, Date = line.strip().split("\t")
     price = DailyPrice(Ticker, OpenValue, CloseValue, LowThe, HighThe, volume, Date)
     h[Ticker] = h.get(Ticker, []) + [price]
+finalList = []
 for Ticker in h.keys():
     prices = h[Ticker]
     dates = []
@@ -38,11 +35,11 @@ for Ticker in h.keys():
         volumes.append(float(price.volume))
         maxvalues.append(float(price.highthe))
         minvalues.append(float(price.lowthe))
-    #print(dates)
-    openValue = float(prices[0].openvalue)
-    #print(prices[0].date)
+    openValue = float(prices[0].closevalue)
     closeValue = float(prices[-1].closevalue)
-    #print(prices[-1].date)
-    FinalVariance = str(((closeValue - openValue) / openValue) * 100) + "%"
-    print(Ticker, FinalVariance, max(maxvalues), min(minvalues),
-          sum(volumes) / len(volumes), sep=" ")
+    FinalVariance = round(((closeValue - openValue) / openValue) * 100)
+    finalList.append((Ticker + "\t" + "\t" + str(FinalVariance) + "%" + "\t" + str(max(maxvalues)) +"\t" + str(min(minvalues)) + "\t" +str(sum(volumes)/len(volumes)),FinalVariance))
+sortedList = sorted(finalList,key = lambda x: x[1],reverse=True)
+for s in sortedList:
+    print(s[0])
+
