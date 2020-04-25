@@ -1,5 +1,5 @@
 import sys
-from .DailyPrice import DailyPrice
+from DailyPrice import DailyPrice
 
 
 
