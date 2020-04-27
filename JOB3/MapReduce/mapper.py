@@ -8,8 +8,8 @@ def mapping():
     for line in prices:
         Ticker, OpenValue, CloseValue, Adj_close, LowThe, HighThe, Volume, Date = line.strip().split(",")
         year = Date.split("-")[0]
-        if year >= '2016':
-            print(Ticker, OpenValue, CloseValue, Date, sep='\t')
+        if year >= '2016' and Ticker=='SNE':
+            print(Ticker, CloseValue, year, sep='\t')
 
 
 if __name__ == '__main__':
