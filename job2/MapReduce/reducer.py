@@ -4,10 +4,8 @@ import time
 
 
 def reducer():
-    #sectorDict = {}
     listOfOutputs = []
     sectorDict=createDict()
-
     for key, value in sectorDict.items():
         for sy_key, sy_value in value.items():
             finalVolume = (sy_value['totVolumes']) / (sy_value['numbersOfTicker'])
