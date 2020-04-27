@@ -10,9 +10,22 @@ def finalVariance(OpenValue, FinalValue):
 
 h = {}
 for line in sys.stdin.readlines():
-    Ticker, CloseValue, Date = line.strip().split("\t")
-    h[Ticker, Date] = h.get((Ticker,Date),[]) + [CloseValue]
+    Ticker, CloseValue, Year = line.strip().split("\t")
+    h[Ticker, Year] = h.get((Ticker, Year), []) + [CloseValue]
 h2 = {}
+Visited = []
+Final = []
 for t in h.keys():
-    if not t  in h2.keys():
-        h2[t] = h2.get(t, 0) + finalVariance(h[t][0], h[t][-1])
+    if t not in Visited:
+        finalVar = finalVariance(h[t][0], h[t][-1])
+        Final.append((t[0], t[1], finalVar))
+        Visited.append(t)
+for x in Final:
+    h2[x[0]] = h2.get(x[0], "") + str(x[1]) + ":" + str(x[2]) + "% "
+res = {}
+for key, val in sorted(h2.items()):
+    if len(val.split(" ")) == 4:
+        res[val] = res.get(val, []) + [key]
+for t in res.keys():
+    if len(res[t]) > 1:
+        print(' '.join(map(str, res[t])) + ": " + t)
