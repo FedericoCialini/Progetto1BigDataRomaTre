@@ -32,5 +32,5 @@ if __name__ == "__main__":
     spark = pyspark.sql.SparkSession.builder.appName("Job3Spark").getOrCreate()
     tickers = elaborate(spark)
     for t in tickers:
-        print(' '.join(map(str, t[1])) + ":" + ' '.join(map(str, t[0])))
+        print(' '.join(map(str, t[1])) + " : " + ''.join(map(lambda x: "{0}: {1}% ".format(x[0], x[1]), t[0])))
     spark.stop()
