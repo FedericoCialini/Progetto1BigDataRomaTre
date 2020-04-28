@@ -2,7 +2,6 @@
 import sys
 
 
-
 def mapping():
     lines = sys.stdin.readlines()
     Ticker_sector = {}
@@ -12,13 +11,13 @@ def mapping():
         if splits[0] == "ticker":
             continue
         if len(splits) == 8:
-            Ticker,CloseValue, LowThe, HighThe, Volume, Date=historical_stock_prices(splits)
+            Ticker, CloseValue, LowThe, HighThe, Volume, Date = historical_stock_prices(splits)
             year = Date.split("-")[0]
             if year >= '2008':
                 sector = Ticker_sector.get(Ticker)
-                print(Ticker,CloseValue, LowThe, HighThe, Volume, Date, sector, sep='\t')
+                print(Ticker, CloseValue, LowThe, HighThe, Volume, Date, sector, sep='\t')
         else:
-            Ticker,Sector=historical_stocks(splits)
+            Ticker, Sector = historical_stocks(splits)
             Ticker_sector[Ticker] = Ticker_sector.get(Ticker, []) + [Sector]
 
 
@@ -29,14 +28,15 @@ def historical_stocks(splits):
     else:
         Ticker = splits[0]
         if len(splits) <= 7:
-            if ':' in splits[len(splits)-2]:
-                posSect=len(splits)-3
+            if ':' in splits[len(splits) - 2]:
+                posSect = len(splits) - 3
             else:
-                posSect= len(splits)-2
+                posSect = len(splits) - 2
         else:
             posSect = len(splits) - 3
         Sector = splits[posSect]
-    return Ticker,Sector
+    return Ticker, Sector
+
 
 def historical_stock_prices(splits):
     Ticker = splits[0]
@@ -45,7 +45,8 @@ def historical_stock_prices(splits):
     HighThe = splits[5]
     Volume = splits[6]
     Date = splits[7]
-    return Ticker,CloseValue, LowThe, HighThe, Volume, Date
+    return Ticker, CloseValue, LowThe, HighThe, Volume, Date
+
 
 if __name__ == '__main__':
     mapping()
