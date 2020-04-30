@@ -23,7 +23,7 @@ def load_data(Spark):
 def elaborate(Spark):
     Tickers = load_data(Spark) \
         .filter(lambda x: x[7].split("-")[0] >= '2008') \
-        .map(lambda x: (x[0], [[float(x[2]), float(x[6])]])) \
+        .map(lambda x: (x[0], [(float(x[2]), float(x[6]))])) \
         .reduceByKey(lambda x, y: x + y) \
         .map(lambda x: (x[0], (finalVariance(x[1][0][0], x[1][-1][0]), min(TakeColumn(x[1], 0)),
                                max(TakeColumn(x[1], 0)), (sum(TakeColumn(x[1], 1)) / len(x[1]))))) \
