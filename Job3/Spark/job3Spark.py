@@ -24,7 +24,7 @@ def load_names(Spark):
 def printName(Ticker, NameDict):
     try:
         return NameDict[Ticker]
-    except:
+    except :
         return Ticker
 
 
