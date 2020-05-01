@@ -24,14 +24,14 @@ GROUP BY ticker;
 CREATE TABLE IF NOT EXISTS minyears AS
 SELECT
     t.ticker,
-    t.closevalue as minvalue,
+    t.closevalue as minvalue
 FROM tickers t JOIN tickeryear y ON t.ticker=y.ticker
 WHERE (t.day = y.mindata);
 
 CREATE TABLE IF NOT EXISTS maxyears AS
 SELECT
     t.ticker,
-    t.closevalue as maxvalue,
+    t.closevalue as maxvalue
 FROM tickers t JOIN tickeryear y ON t.ticker=y.ticker
 WHERE (t.day = y.maxdata);
 
