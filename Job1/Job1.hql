@@ -24,14 +24,14 @@ GROUP BY ticker;
 CREATE TABLE IF NOT EXISTS minyears AS
 SELECT
     t.ticker,
-    t.closevalue as minvalue
+    t.closevalue as minvalue,
 FROM tickers t JOIN tickeryear y ON t.ticker=y.ticker
 WHERE (t.day = y.mindata);
 
 CREATE TABLE IF NOT EXISTS maxyears AS
 SELECT
     t.ticker,
-    t.closevalue
+    t.closevalue as maxvalue,
 FROM tickers t JOIN tickeryear y ON t.ticker=y.ticker
 WHERE (t.day = y.maxdata);
 
@@ -42,7 +42,7 @@ SELECT
     y.minclose,
     y.maxclose,
     y.avgvolume
-FROM  minyears a JOIN maxyears b JOIN tickeryear y  ON a.ticker = b.ticker AND a.ticker = y.ticker
+FROM  minyears a JOIN maxyears b JOIN tickeryear y  ON a.ticker = b.ticker and a.ticker = y.ticker
 ORDER BY percentagevariation DESC;
 
 
