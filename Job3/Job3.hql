@@ -61,7 +61,7 @@ FROM PercentageVariations
 GROUP BY ticker;
 
 CREATE TABLE IF NOT EXISTS SameVariations AS
-SELECT percentages, COLLECT_SET(b.name) AS namelist
+SELECT percentages, COLLECT_LIST(b.name) AS namelist
 FROM VariationsPerTicker a JOIN names b ON a.ticker = b.ticker
 WHERE size(percentages) = 3
 GROUP BY percentages;
