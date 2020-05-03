@@ -1,6 +1,8 @@
 set hive.auto.convert.join = false;
-set mapred.compress.map.output=true
-set hive.exec.parallel=true
+set hive.vectorized.execution.enabled = true;
+set hive.vectorized.execution.reduce.enabled = true;
+set hive.exec.dynamic.partition = true;
+set hive.exec.dynamic.partition.mode = nonstrict;
 
 CREATE TABLE IF NOT EXISTS tickers (ticker STRING, openvalues FLOAT, closevalue FLOAT,adjustedThe FLOAT,low FLOAT,high FLOAT,volume FLOAT,day DATE)
 ROW FORMAT DELIMITED
