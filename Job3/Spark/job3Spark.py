@@ -24,8 +24,21 @@ def load_names(Spark):
 def printName(Ticker, NameDict):
     try:
         return NameDict[Ticker]
-    except :
+    except:
         return Ticker
+
+
+def TakeColumn(Lists, year):
+    ColumnList = []
+    for List in Lists:
+        if List[0] == year:
+            ColumnList.append(List[1])
+    return ColumnList
+
+
+def avg(List):
+    List = list(map(int, List))
+    return str(round(sum(List) / len(List)))
 
 
 def elaborate(Spark):
@@ -37,10 +50,14 @@ def elaborate(Spark):
         .map(lambda x: (x[0][0], [(x[0][1], finalVariance(x[1][0], x[1][-1]))])) \
         .reduceByKey(lambda x, y: x + y) \
         .filter(lambda x: len(x[1]) == 3) \
-        .map(lambda x: (tuple(sorted(x[1], key=lambda y: y[0])), [x[0]])) \
+        .map(lambda x: (printName(x[0], NameDict), tuple(sorted(x[1], key=lambda y: y[0])))) \
+        .reduceByKey(lambda x, y: x + y) \
+        .map(lambda x: ((avg(TakeColumn(x[1], '2016')), avg(TakeColumn(x[1], '2017')),
+                         avg(TakeColumn(x[1], '2018'))), [x[0]])) \
         .reduceByKey(lambda x, y: x + y) \
         .filter(lambda x: len(x[1]) > 1) \
         .collect()
+    print(Tickers)
     return Tickers, NameDict
 
 
@@ -48,6 +65,6 @@ if __name__ == "__main__":
     spark = pyspark.sql.SparkSession.builder.appName("Job3Spark").getOrCreate()
     tickers, nameDict = elaborate(spark)
     for t in tickers:
-        print(','.join(map(str, map(lambda x: printName(x, nameDict), t[1])))
-              + " : " + ''.join(map(lambda x: "{0}: {1}% ".format(x[0], x[1]), t[0])))
+        print(','.join(map(str, t[1]))
+              + " : " + '2016 : ' + t[0][0] + "% , " + '2017: ' + t[0][1] + '% , ' + '2018 : ' + t[0][2])
     spark.stop()
