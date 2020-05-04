@@ -34,7 +34,7 @@ def printResults(ResultDict):
                     t[1][1]) + '% ,' + '2018: ' + str(t[2][1]) + '%')
 
 
-def TakeColumn(Lists, year): 
+def TakeColumn(Lists, year):
     ColumnList = []
     for List in Lists:
         if List[0] == year:
@@ -77,12 +77,9 @@ def reducer():
     for x in Final:
         tickercompany = printName(x[0], name)
         h2[tickercompany] = h2.get(tickercompany, []) + [(x[1], x[2])]
-    print(h2)
     h2 = joinNames(h2)
-    print(h2)
     res = {}
     for key, val in sorted(h2.items()):
-        print(val)
         if len(val) == 3:
             res[tuple(val)] = res.get(tuple(val), []) + [key]
     printResults(res)
