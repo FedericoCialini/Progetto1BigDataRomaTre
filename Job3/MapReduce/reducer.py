@@ -26,10 +26,40 @@ def groupByYearAndVariance(TickerDict):
     return Final
 
 
-def printResults(ResultDict, NameDict):
+def printResults(ResultDict):
     for t in ResultDict.keys():
         if len(ResultDict[t]) > 1:
-            print(','.join(map(str, map(lambda x: printName(x, NameDict), ResultDict[t]))) + ": " + t)
+            print(
+                ','.join(map(str, ResultDict[t])) + ": " + '2016: ' + str(t[0][1]) + '% ,' + '2017: ' + str(
+                    t[1][1]) + '% ,' + '2018: ' + str(t[2][1]) + '%')
+
+
+def TakeColumn(Lists, year): 
+    ColumnList = []
+    for List in Lists:
+        if List[0] == year:
+            ColumnList.append(List[1])
+    return ColumnList
+
+
+def avg(List):
+    List = list(map(int, List))
+    return str(round(sum(List) / len(List)))
+
+
+def joinNames(ResultDict):
+    for name in ResultDict.keys():
+        if len(ResultDict[name]) > 1:
+            column2016 = TakeColumn(ResultDict[name], '2016')
+            column2017 = TakeColumn(ResultDict[name], '2017')
+            column2018 = TakeColumn(ResultDict[name], '2018')
+            if len(column2016) != 0 and len(column2017) != 0 and len(column2018) != 0:
+                ResultDict[name] = ((
+                    ('2016', str(avg(column2016))), ('2017', str(avg(column2017))),
+                    ('2018', str(avg(column2018)))))
+        else:
+            ResultDict[name] = ResultDict[name][0]
+    return ResultDict
 
 
 def reducer():
@@ -45,12 +75,17 @@ def reducer():
     h2 = {}
     Final = groupByYearAndVariance(h)
     for x in Final:
-        h2[x[0]] = h2.get(x[0], "") + str(x[1]) + ":" + str(x[2]) + "% "
+        tickercompany = printName(x[0], name)
+        h2[tickercompany] = h2.get(tickercompany, []) + [(x[1], x[2])]
+    print(h2)
+    h2 = joinNames(h2)
+    print(h2)
     res = {}
     for key, val in sorted(h2.items()):
-        if len(val.split(" ")) == 4:
-            res[val] = res.get(val, []) + [key]
-    printResults(res, name)
+        print(val)
+        if len(val) == 3:
+            res[tuple(val)] = res.get(tuple(val), []) + [key]
+    printResults(res)
 
 
 if __name__ == '__main__':
