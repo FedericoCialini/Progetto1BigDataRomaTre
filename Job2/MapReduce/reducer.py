@@ -8,7 +8,7 @@ def reducer():
     sectorDict = createDict()
     for key, value in sectorDict.items():
         for sy_key, sy_value in value.items():
-            finalVolume = (sy_value['totVolumes']) / (sy_value['numbersOfTicker'])
+            finalVolume = sy_value['totVolumes'] / len(sy_value['ticker'])
             totXCen = 0
             totQuot = 0
             for currentTicker in sy_value['ticker'].values():
@@ -29,9 +29,8 @@ def reducer():
         print(f'{output[0][0]:30} | {output[0][1]:30} | {output[0][2]:30} | {output[0][3]:30} | {output[0][4]:25} ')
 
 
-def updateQuote(ticker, low, high):
-    q = (float(low) + float(high)) / 2.0
-    ticker['totDailyQuo'] += q
+def updateQuote(ticker,CloseValue):
+    ticker['totDailyQuo'] += float(CloseValue)
     ticker['totDays'] += 1
 
 
@@ -57,7 +56,7 @@ def createDict():
         try:
             sector_year = sector[year]
         except KeyError:
-            sector[year] = {'numbersOfTicker': 0, 'totVolumes': 0, 'ticker': {}}
+            sector[year] = {'totVolumes': 0, 'ticker': {}}
             sector_year = sector[year]
         try:
             ticker = sector_year['ticker'][Ticker]
@@ -65,10 +64,9 @@ def createDict():
             sector_year['ticker'][Ticker] = {'start': ['2100-01-01', 0], 'finish': ['2000-01-01', 0], 'totDailyQuo': 0,
                                              'totDays': 0}
             ticker = sector_year['ticker'][Ticker]
-        updateQuote(ticker, LowThe, HighThe)
+        updateQuote(ticker, CloseValue)
         updateVariance(ticker, Date, CloseValue)
-        sector_year['numbersOfTicker'] += 1
-        sector_year['totVolumes'] += (float(Volume))
+        sector_year['totVolumes'] += float(Volume)
     return sectorDict
 
 

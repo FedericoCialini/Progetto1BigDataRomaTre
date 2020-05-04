@@ -19,11 +19,11 @@ def getSector(sectorPair, ticker):
 def elaborate(spark, sectorPair):
     Tickers = historical_stock_price(spark)\
         .filter(lambda x: x[7].split("-")[0] >= '2008')\
-        .map(lambda x: ((x[0], x[7].split("-")[0]), [[float(x[2]), (float(x[4]) + float(x[5])) / 2.0, float(x[6])]]))\
+        .map(lambda x: ((x[0], x[7].split("-")[0]), [[float(x[2]), float(x[6])]]))\
         .reduceByKey(lambda x, y: x + y)\
-        .map(lambda x: ((getSector(sectorPair, x[0][0]), x[0][1]), [[finalVariance(x[1][0][0], x[1][-1][0]), avgColumn(x[1], 1), sum(TakeColumn(x[1], 2)), len(x[1])]]))\
+        .map(lambda x: ((getSector(sectorPair, x[0][0]), x[0][1]), [[finalVariance(x[1][0][0], x[1][-1][0]), avgColumn(x[1], 0), sum(TakeColumn(x[1], 1))]]))\
         .reduceByKey(lambda x, y: x + y)\
-        .map(lambda x: (x[0], round(avgColumn(x[1], 0), 2), avgColumn(x[1], 1), sum(TakeColumn(x[1], 2)) / sum(TakeColumn(x[1], 3)))) \
+        .map(lambda x: (x[0], round(avgColumn(x[1], 0), 2), avgColumn(x[1], 1), avgColumn(x[1], 2)))\
         .collect()
     Tickers = sorted(Tickers, key=lambda x: x[0], reverse=False)
     return Tickers
