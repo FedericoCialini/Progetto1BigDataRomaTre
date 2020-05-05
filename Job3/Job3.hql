@@ -2,6 +2,8 @@ set hive.auto.convert.join = false;
 set mapred.compress.map.output=true
 set hive.exec.parallel=true
 
+DROP TABLE IF EXISTS names;
+
 CREATE TABLE IF NOT EXISTS tickers (ticker STRING, openvalues FLOAT, closevalue FLOAT,adjustedThe FLOAT,low FLOAT,high FLOAT,volume FLOAT,day DATE)
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -13,12 +15,13 @@ OVERWRITE INTO TABLE tickers;
 
 CREATE TABLE IF NOT EXISTS names (ticker STRING,exc STRING, name STRING,sector STRING,industry STRING)
 ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
+FIELDS TERMINATED BY '|'
 STORED AS TEXTFILE
 LOCATION  './data/historical_stocks.csv'
 TBLPROPERTIES("skip.header.line.count"="1");
-LOAD DATA LOCAL INPATH './data/historical_stocks.csv'
+LOAD DATA LOCAL INPATH './data/historical_stocks.dsv'
 OVERWRITE INTO TABLE names;
+
 
 DROP TABLE IF EXISTS dates;
 DROP TABLE IF EXISTS MinMaxDates;
@@ -50,19 +53,20 @@ FROM dates a JOIN MinMaxDates b on a.ticker = b.ticker and a.day = b.maxdate;
 
 CREATE TABLE IF NOT EXISTS PercentageVariations AS
 SELECT
-    o.ticker,
+    n.name,
     ROUND((((c.closevalue-o.closevalue)/o.closevalue) * 100)) AS percentagevariation,
     o.anno
-FROM OpenValues o JOIN CloseValues c ON o.ticker = c.ticker AND o.anno = c.anno;
+FROM OpenValues o JOIN CloseValues c ON o.ticker = c.ticker AND o.anno = c.anno JOIN names n ON o.ticker = n.ticker;
+GROUP BY n.name,o.anno
 
 CREATE TABLE IF NOT EXISTS VariationsPerTicker AS
-SELECT ticker, collect_list(percentagevariation) AS percentages
+SELECT name, collect_list(percentagevariation) AS percentages
 FROM PercentageVariations
-GROUP BY ticker;
+GROUP BY name;
 
 CREATE TABLE IF NOT EXISTS SameVariations AS
-SELECT percentages, COLLECT_LIST(b.name) AS namelist
-FROM VariationsPerTicker a JOIN names b ON a.ticker = b.ticker
+SELECT percentages, COLLECT_LIST(a.name) AS namelist
+FROM VariationsPerTicker a
 WHERE size(percentages) = 3
 GROUP BY percentages;
 

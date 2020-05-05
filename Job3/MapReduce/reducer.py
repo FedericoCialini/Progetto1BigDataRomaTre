@@ -2,6 +2,7 @@
 import sys
 from operator import itemgetter
 
+
 def finalVariance(OpenValue, FinalValue):
     OpenValue = float(OpenValue)
     FinalValue = float(FinalValue)
@@ -26,6 +27,24 @@ def groupByYearAndVariance(TickerDict):
     return Final
 
 
+def deleteTickers(Dict, Tickers):
+    for t in Tickers:
+        if (t, '2016') not in Dict.keys() or (t, '2017') not in Dict.keys() or (t, '2018') not in Dict.keys():
+            try:
+                Dict.pop((t, '2016'))
+            except:
+                pass
+            try:
+                Dict.pop((t, '2017'))
+            except:
+                pass
+            try:
+                Dict.pop((t, '2018'))
+            except:
+                pass
+    return Dict
+
+
 def printResults(ResultDict):
     for t in ResultDict.keys():
         if len(ResultDict[t]) > 1:
@@ -44,7 +63,7 @@ def TakeColumn(Lists, year):
 
 def avg(List):
     List = list(map(int, List))
-    return str(round(sum(List) / len(List)))
+    return str(sum(List) / len(List))
 
 
 def joinNames(ResultDict):
@@ -66,6 +85,7 @@ def reducer():
     h = {}
     name = {}
     ListOfDays = []
+    Tickers = []
     for line in sys.stdin.readlines():
         if len(line.strip().split("\t")) == 3:
             Ticker, CloseValue, Date = line.strip().split("\t")
@@ -73,6 +93,7 @@ def reducer():
         else:
             Ticker, Name = line.strip().split("\t")
             name[Ticker] = h.get(Ticker, "") + Name
+            Tickers.append(Ticker)
     ListOfDays = sorted(ListOfDays, key=itemgetter(1))
     for TickerByDay in ListOfDays:
         Ticker = TickerByDay[0]
@@ -80,6 +101,7 @@ def reducer():
         Date = TickerByDay[1]
         h[Ticker, Date.split("-")[0]] = h.get((Ticker, Date.split("-")[0]), []) + [CloseValue]
     h2 = {}
+    h = deleteTickers(h, Tickers)
     Final = groupByYearAndVariance(h)
     for x in Final:
         tickercompany = printName(x[0], name)

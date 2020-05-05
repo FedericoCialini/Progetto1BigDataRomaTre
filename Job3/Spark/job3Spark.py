@@ -38,7 +38,7 @@ def TakeColumn(Lists, year):
 
 def avg(List):
     List = list(map(int, List))
-    return str(round(sum(List) / len(List)))
+    return str(sum(List) / len(List))
 
 
 def elaborate(Spark):
