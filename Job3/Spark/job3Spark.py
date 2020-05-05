@@ -65,6 +65,6 @@ if __name__ == "__main__":
     spark = pyspark.sql.SparkSession.builder.appName("Job3Spark").getOrCreate()
     tickers, nameDict = elaborate(spark)
     for t in tickers:
-        print(','.join(map(str, t[1]))
+        print(';'.join(map(str, t[1]))
               + " : " + '2016 : ' + t[0][0] + "% , " + '2017: ' + t[0][1] + '% , ' + '2018 : ' + t[0][2])
     spark.stop()

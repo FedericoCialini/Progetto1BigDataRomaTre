@@ -1,6 +1,6 @@
 #!/home/federico/anaconda3/bin/python
 import sys
-
+from operator import itemgetter
 
 def finalVariance(OpenValue, FinalValue):
     OpenValue = float(OpenValue)
@@ -30,7 +30,7 @@ def printResults(ResultDict):
     for t in ResultDict.keys():
         if len(ResultDict[t]) > 1:
             print(
-                ','.join(map(str, ResultDict[t])) + ": " + '2016: ' + str(t[0][1]) + '% ,' + '2017: ' + str(
+                ';'.join(map(str, ResultDict[t])) + ": " + '2016: ' + str(t[0][1]) + '% ,' + '2017: ' + str(
                     t[1][1]) + '% ,' + '2018: ' + str(t[2][1]) + '%')
 
 
@@ -65,13 +65,20 @@ def joinNames(ResultDict):
 def reducer():
     h = {}
     name = {}
+    ListOfDays = []
     for line in sys.stdin.readlines():
         if len(line.strip().split("\t")) == 3:
-            Ticker, CloseValue, Year = line.strip().split("\t")
-            h[Ticker, Year] = h.get((Ticker, Year), []) + [CloseValue]
+            Ticker, CloseValue, Date = line.strip().split("\t")
+            ListOfDays.append((Ticker, Date, CloseValue))
         else:
             Ticker, Name = line.strip().split("\t")
             name[Ticker] = h.get(Ticker, "") + Name
+    ListOfDays = sorted(ListOfDays, key=itemgetter(1))
+    for TickerByDay in ListOfDays:
+        Ticker = TickerByDay[0]
+        CloseValue = TickerByDay[2]
+        Date = TickerByDay[1]
+        h[Ticker, Date.split("-")[0]] = h.get((Ticker, Date.split("-")[0]), []) + [CloseValue]
     h2 = {}
     Final = groupByYearAndVariance(h)
     for x in Final:
