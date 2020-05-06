@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS tickers (ticker STRING, openvalues FLOAT, closevalue 
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION  './data/historical_stock_prices.csv'
+LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
 TBLPROPERTIES("skip.header.line.count"="1");
-LOAD DATA LOCAL INPATH './data/historical_stock_prices.csv'
+LOAD DATA LOCAL INPATH '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
 OVERWRITE INTO TABLE tickers;
 
 
@@ -40,7 +40,7 @@ WHERE (t.day = y.maxdata);
 
 SELECT
     b.ticker,
-    (((b.maxvalue-a.minvalue)/a.minvalue) * 100) AS percentagevariation,
+    round((((b.maxvalue-a.minvalue)/a.minvalue) * 100)) AS percentagevariation,
     y.minclose,
     y.maxclose,
     y.avgvolume
