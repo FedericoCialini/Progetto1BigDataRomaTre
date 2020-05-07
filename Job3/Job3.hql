@@ -1,23 +1,19 @@
-set hive.auto.convert.join = false;
-set mapred.compress.map.output=true
-set hive.exec.parallel=true
-
 CREATE TABLE IF NOT EXISTS tickers (ticker STRING, openvalues FLOAT, closevalue FLOAT,adjustedThe FLOAT,low FLOAT,high FLOAT,volume FLOAT,day DATE)
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION  './data/historical_stock_prices.csv'
+LOCATION  '/Users/teo/Downloads/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
 TBLPROPERTIES("skip.header.line.count"="1");
-LOAD DATA LOCAL INPATH './data/historical_stock_prices.csv'
+LOAD DATA LOCAL INPATH '/Users/teo/Downloads/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
 OVERWRITE INTO TABLE tickers;
 
 CREATE TABLE IF NOT EXISTS names (ticker STRING,exc STRING, name STRING,sector STRING,industry STRING)
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION  './data/historical_stocks.csv'
+LOCATION  '/Users/teo/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
 TBLPROPERTIES("skip.header.line.count"="1");
-LOAD DATA LOCAL INPATH './data/historical_stocks.csv'
+LOAD DATA LOCAL INPATH '/Users/teo/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
 OVERWRITE INTO TABLE names;
 
 DROP TABLE IF EXISTS dates;
@@ -69,12 +65,3 @@ GROUP BY percentages;
 SELECT *
 FROM SameVariations
 WHERE size(namelist) > 1;
-
-
-
-
-
-
-
-
-
