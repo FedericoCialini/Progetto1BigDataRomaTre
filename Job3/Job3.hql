@@ -4,25 +4,29 @@ set hive.exec.parallel=true
 
 DROP TABLE IF EXISTS names;
 
+
 CREATE TABLE IF NOT EXISTS tickers (ticker STRING, openvalues FLOAT, closevalue FLOAT,adjustedThe FLOAT,low FLOAT,high FLOAT,volume FLOAT,day DATE)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-STORED AS TEXTFILE
-LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
-TBLPROPERTIES("skip.header.line.count"="1");
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+   "separatorChar" = ",",
+   "quoteChar"     = "\"",
+   "skip.header.line.count"="1")
+   STORED AS TEXTFILE
+LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv';
 LOAD DATA LOCAL INPATH '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
 OVERWRITE INTO TABLE tickers;
 
+
 CREATE TABLE IF NOT EXISTS names (ticker STRING,exc STRING, name STRING,sector STRING,industry STRING)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY '|'
-STORED AS TEXTFILE
-LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stocks.dsv'
-TBLPROPERTIES("skip.header.line.count"="1");
-LOAD DATA LOCAL INPATH '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stocks.dsv'
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+WITH SERDEPROPERTIES (
+   "separatorChar" = ",",
+   "quoteChar"     = "\"",
+   "skip.header.line.count"="1")
+   STORED AS TEXTFILE
+LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stocks.csv';
+LOAD DATA LOCAL INPATH '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
 OVERWRITE INTO TABLE names;
-
-
 
 DROP TABLE IF EXISTS PercentageVariations;
 DROP TABLE IF EXISTS SamePercentageYear;

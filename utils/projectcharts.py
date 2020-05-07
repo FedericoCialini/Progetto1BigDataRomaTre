@@ -2,10 +2,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # inserisci i dati
-timesMrjob1 = [1, 2, 3]
-timesMrjob2 = [2, 2, 4]
-timesMrjob3 = [3, 4, 8]
-dimension = [100, 1000, 10000]
+timesMrjob1 = [1, 2, 3, 4, 5]
+timesMrjob2 = [2, 2, 4, 5, 5]
+timesMrjob3 = [3, 4, 8, 5, 5]
+timesSpjob1 = [1, 2, 3, 4, 5]
+timesSpjob2 = [2, 2, 4, 5, 5]
+timesSpjob3 = [3, 4, 8, 5, 5]
+timesHvjob1 = [1, 2, 3, 4, 5]
+timesHvjob2 = [2, 2, 4, 5, 5]
+timesHvjob3 = [3, 4, 8, 5, 5]
+dimension = [20973890, 26217361, 31460833, 36704305, 41947778] # normale,+25,+50,+75,+100%
 # --------------------
 plt.plot(dimension, timesMrjob1, color='blue')
 plt.plot(dimension, timesMrjob2, color='red')
