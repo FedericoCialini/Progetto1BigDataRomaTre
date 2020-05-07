@@ -77,12 +77,3 @@ GROUP BY percentages;
 SELECT *
 FROM SameVariations
 WHERE size(namelist) > 1;
-
-
-
-
-
-
-
-
-
