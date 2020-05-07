@@ -1,7 +1,7 @@
 set hive.auto.convert.join = false;
 set mapred.compress.map.output=true
 set hive.exec.parallel=true
-
+DROP TABLE IF EXISTS tickers;
 DROP TABLE IF EXISTS names;
 
 
