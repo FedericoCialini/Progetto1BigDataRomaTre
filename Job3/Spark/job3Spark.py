@@ -57,7 +57,6 @@ def elaborate(Spark):
         .reduceByKey(lambda x, y: x + y) \
         .filter(lambda x: len(x[1]) > 1) \
         .collect()
-    print(Tickers)
     return Tickers, NameDict
 
 
