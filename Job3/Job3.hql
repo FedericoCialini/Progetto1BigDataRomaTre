@@ -1,16 +1,7 @@
-<<<<<<< HEAD
-CREATE TABLE IF NOT EXISTS tickers (ticker STRING, openvalues FLOAT, closevalue FLOAT,adjustedThe FLOAT,low FLOAT,high FLOAT,volume FLOAT,day DATE)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-STORED AS TEXTFILE
-LOCATION  '/Users/teo/Downloads/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
-TBLPROPERTIES("skip.header.line.count"="1");
-LOAD DATA LOCAL INPATH '/Users/teo/Downloads/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
-=======
 set hive.auto.convert.join = false;
 set mapred.compress.map.output=true
 set hive.exec.parallel=true
-
+DROP TABLE IF EXISTS tickers;
 DROP TABLE IF EXISTS names;
 
 
@@ -23,19 +14,10 @@ WITH SERDEPROPERTIES (
    STORED AS TEXTFILE
 LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv';
 LOAD DATA LOCAL INPATH '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
->>>>>>> 26626a4dab9b6672f5b93c459d137e5785fbb591
 OVERWRITE INTO TABLE tickers;
 
 
 CREATE TABLE IF NOT EXISTS names (ticker STRING,exc STRING, name STRING,sector STRING,industry STRING)
-<<<<<<< HEAD
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-STORED AS TEXTFILE
-LOCATION  '/Users/teo/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
-TBLPROPERTIES("skip.header.line.count"="1");
-LOAD DATA LOCAL INPATH '/Users/teo/Downloads/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
-=======
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
    "separatorChar" = ",",
@@ -44,7 +26,6 @@ WITH SERDEPROPERTIES (
    STORED AS TEXTFILE
 LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stocks.csv';
 LOAD DATA LOCAL INPATH '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stocks.csv'
->>>>>>> 26626a4dab9b6672f5b93c459d137e5785fbb591
 OVERWRITE INTO TABLE names;
 
 DROP TABLE IF EXISTS PercentageVariations;
