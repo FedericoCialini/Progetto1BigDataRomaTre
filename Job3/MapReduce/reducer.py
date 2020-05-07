@@ -1,5 +1,6 @@
 #!/home/federico/anaconda3/bin/python
 import sys
+from operator import itemgetter
 
 
 def finalVariance(OpenValue, FinalValue):
@@ -26,31 +27,91 @@ def groupByYearAndVariance(TickerDict):
     return Final
 
 
-def printResults(ResultDict, NameDict):
+def deleteTickers(Dict, Tickers):
+    for t in Tickers:
+        if (t, '2016') not in Dict.keys() or (t, '2017') not in Dict.keys() or (t, '2018') not in Dict.keys():
+            try:
+                Dict.pop((t, '2016'))
+            except:
+                pass
+            try:
+                Dict.pop((t, '2017'))
+            except:
+                pass
+            try:
+                Dict.pop((t, '2018'))
+            except:
+                pass
+    return Dict
+
+
+def printResults(ResultDict):
     for t in ResultDict.keys():
         if len(ResultDict[t]) > 1:
-            print(','.join(map(str, map(lambda x: printName(x, NameDict), ResultDict[t]))) + ": " + t)
+            print(
+                ';'.join(map(str, ResultDict[t])) + ": " + '2016: ' + str(t[0][1]) + '% ,' + '2017: ' + str(
+                    t[1][1]) + '% ,' + '2018: ' + str(t[2][1]) + '%')
+
+
+def TakeColumn(Lists, year):
+    ColumnList = []
+    for List in Lists:
+        if List[0] == year:
+            ColumnList.append(List[1])
+    return ColumnList
+
+
+def avg(List):
+    List = list(map(int, List))
+    return str(sum(List) / len(List))
+
+
+def joinNames(ResultDict):
+    for name in ResultDict.keys():
+        if len(ResultDict[name]) > 1:
+            column2016 = TakeColumn(ResultDict[name], '2016')
+            column2017 = TakeColumn(ResultDict[name], '2017')
+            column2018 = TakeColumn(ResultDict[name], '2018')
+            if len(column2016) != 0 and len(column2017) != 0 and len(column2018) != 0:
+                ResultDict[name] = ((
+                    ('2016', str(avg(column2016))), ('2017', str(avg(column2017))),
+                    ('2018', str(avg(column2018)))))
+        else:
+            ResultDict[name] = ResultDict[name][0]
+    return ResultDict
 
 
 def reducer():
     h = {}
     name = {}
+    ListOfDays = []
+    Tickers = []
     for line in sys.stdin.readlines():
         if len(line.strip().split("\t")) == 3:
-            Ticker, CloseValue, Year = line.strip().split("\t")
-            h[Ticker, Year] = h.get((Ticker, Year), []) + [CloseValue]
+            Ticker, CloseValue, Date = line.strip().split("\t")
+            ListOfDays.append((Ticker, Date, CloseValue))
         else:
             Ticker, Name = line.strip().split("\t")
             name[Ticker] = h.get(Ticker, "") + Name
+            Tickers.append(Ticker)
+    ListOfDays = sorted(ListOfDays, key=itemgetter(1))
+    for TickerByDay in ListOfDays:
+        Ticker = TickerByDay[0]
+        CloseValue = TickerByDay[2]
+        Date = TickerByDay[1]
+        h[Ticker, Date.split("-")[0]] = h.get((Ticker, Date.split("-")[0]), []) + [CloseValue]
     h2 = {}
+    h = deleteTickers(h, Tickers)
     Final = groupByYearAndVariance(h)
     for x in Final:
-        h2[x[0]] = h2.get(x[0], "") + str(x[1]) + ":" + str(x[2]) + "% "
+        tickercompany = printName(x[0], name)
+        h2[tickercompany] = h2.get(tickercompany, []) + [(x[1], x[2])]
+    h2 = joinNames(h2)
     res = {}
     for key, val in sorted(h2.items()):
-        if len(val.split(" ")) == 4:
-            res[val] = res.get(val, []) + [key]
-    printResults(res, name)
+        if len(val) == 3:
+            res[tuple(val)] = res.get(tuple(val), []) + [key]
+    printResults(res)
 
 
 if __name__ == '__main__':
