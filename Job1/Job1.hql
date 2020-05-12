@@ -1,8 +1,17 @@
-set hive.auto.convert.join = false;
 set hive.vectorized.execution.enabled = true;
 set hive.vectorized.execution.reduce.enabled = true;
+set hive.cbo.enable=true;
+set hive.compute.query.using.stats=true;
+set hive.stats.fetch.column.stats=true;
 set hive.exec.dynamic.partition = true;
 set hive.exec.dynamic.partition.mode = nonstrict;
+
+DROP TABLE IF EXISTS tickers;
+DROP TABLE IF EXISTS names;
+DROP TABLE IF EXISTS tickeryear;
+DROP TABLE IF EXISTS minyears;
+DROP TABLE IF EXISTS maxyears;
+
 
 CREATE TABLE IF NOT EXISTS tickers (ticker STRING, openvalues FLOAT, closevalue FLOAT,adjustedThe FLOAT,low FLOAT,high FLOAT,volume FLOAT,day DATE)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
@@ -11,8 +20,8 @@ WITH SERDEPROPERTIES (
    "quoteChar"     = "\"",
    "skip.header.line.count"="1")
    STORED AS TEXTFILE
-LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv';
-LOAD DATA LOCAL INPATH '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/historical_stock_prices.csv'
+LOCATION  '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/new_historical_stock_prices_double.csv';
+LOAD DATA LOCAL INPATH '/home/federico/PycharmProjects/progetto1BigData/daily-historical-stock-prices-1970-2018/new_historical_stock_prices_double.csv'
 OVERWRITE INTO TABLE tickers;
 
 
@@ -27,14 +36,14 @@ CREATE TABLE IF NOT EXISTS minyears AS
 SELECT
     t.ticker,
     t.closevalue as minvalue
-FROM tickers t JOIN tickeryear y ON t.ticker=y.ticker
+FROM tickeryear y JOIN tickers t ON t.ticker=y.ticker
 WHERE (t.day = y.mindata);
 
 CREATE TABLE IF NOT EXISTS maxyears AS
 SELECT
     t.ticker,
     t.closevalue as maxvalue
-FROM tickers t JOIN tickeryear y ON t.ticker=y.ticker
+FROM tickeryear y  JOIN tickers t ON t.ticker=y.ticker
 WHERE (t.day = y.maxdata);
 
 
@@ -45,7 +54,8 @@ SELECT
     y.maxclose,
     y.avgvolume
 FROM  minyears a JOIN maxyears b JOIN tickeryear y  ON a.ticker = b.ticker and a.ticker = y.ticker
-ORDER BY percentagevariation DESC;
+SORT BY percentagevariation DESC
+LIMIT 10;
 
 
 
