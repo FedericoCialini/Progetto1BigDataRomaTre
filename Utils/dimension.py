@@ -1,7 +1,6 @@
 import sys
 newRows = []
 rows = []
-final=[]
 lines = sys.stdin.readlines()
 for line in lines[1:]:
     fields = line.strip().split(",")
